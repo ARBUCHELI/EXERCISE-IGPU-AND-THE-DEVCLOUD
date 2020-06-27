@@ -354,8 +354,9 @@ paths=['gpu_stats.txt', 'cpu_stats.txt', 'gpu_batch_stats.txt', 'cpu_batch_stats
 read_files(paths, ['GPU', 'CPU', 'GPU Batching', 'CPU Batching'])
 </code></pre>
 
-
-
+![image](https://raw.githubusercontent.com/ARBUCHELI/EXERCISE-IGPU-AND-THE-DEVCLOUD/master/download1.png)
+![image](https://raw.githubusercontent.com/ARBUCHELI/EXERCISE-IGPU-AND-THE-DEVCLOUD/master/download2.png)
+![image](https://raw.githubusercontent.com/ARBUCHELI/EXERCISE-IGPU-AND-THE-DEVCLOUD/master/download3.png)
 # Conclusion
 We can see that batching the images leads to some improvement in <strong>inference time</strong> and <strong>FPS</strong> for both the CPU and GPU; however, we can see the improvement in performance for the GPU is much better.
 
