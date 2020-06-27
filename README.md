@@ -47,6 +47,7 @@ sys.path.insert(0, os.path.abspath('/opt/intel'))
 </code></pre>
 
 # The Model
+
 We will be using the <code>vehicle-license-plate-detection-barrier-0106</code> model for this exercise.
 
 Remember to use the appropriate model precisions for each device:
@@ -58,6 +59,7 @@ The model has already been downloaded for you in the <code>/data/models/intel di
 We will be running inference on an image of a car. The path to the image is <code>/data/resources/car.png</code>.
 
 # Step 1: Creating a Python Script
+
 The first step is to create a Python script that you can use to load the model and perform inference. We'll use the <code>%%writefile</code> magic to create a Python file called <code>inference_on_device.py</code>. In the next cell, you will need to complete the <code>TODO</code> items for this Python script.
 
 <code>TODO</code> items:
@@ -139,6 +141,7 @@ if __name__=='__main__':
 </code></pre>
 
 # Step 2: Creating a Job Submission Script
+
 To submit a job to the DevCloud, you'll need to create a shell script. Similar to the Python script above, we'll use the <code>%%writefile</code> magic command to create a shell script called <code>inference_model_job.sh</code>. In the next cell, you will need to complete the <code>TODO</code> items for this shell script.
 
 <code>TODO</code> items:
@@ -177,6 +180,7 @@ tar zcvf output.tgz * # compresses all files in the current directory (output)
 </code></pre>
 
 # Step 3: Submitting a Job to Intel's DevCloud
+
 In the next two sub-steps, you will write your <code>!qsub</code> commands to submit your jobs to Intel's DevCloud to load your model and run inference on the UP Squared Grove IoT Dev kit with an <strong>Intel Atom x7-E3950</strong> CPU and <strong>Intel HD Graphics 505</strong> IGPU.
 
 Your<code>!qsub</code> command should take the following flags and arguments:
@@ -193,15 +197,169 @@ Your<code>!qsub</code> command should take the following flags and arguments:
 4. <code>-F</code> flag - This argument should contain the three values to assign to the variables of the shell script:
 
     * <strong>DEVICE</strong> - Device type for the job: <code>CPU</code> or <code>GPU</code>
-    * BATCHES - Batch size. <code>1 or 10</code>
-    * MODELPATH - Full path to the model for the job. As a reminder, the model is located in <code>/data/models/intel</code>
-    * SAVEPATH - Name of the file you want to save the performance metrics as. These should be named as the following:
+    * <strong>BATCHES</strong> - Batch size. <code>1 or 10</code>
+    * <strong>MODELPATH</strong> - Full path to the model for the job. As a reminder, the model is located in <code>/data/models/intel</code>
+    * <strong>SAVEPATH</strong> - Name of the file you want to save the performance metrics as. These should be named as the following:
         * <code>cpu_stats</code> for the <code>CPU</code> job without batching
         * <code>cpu_batch_stats</code> for the <code>CPU</code> job with batching
         * <code>gpu_stats</code> for the <code>GPU</code> job without batching
         * <code>gpu_batch_stats</code> for the <code>GPU</code> job with batching
         
 <strong>Note</strong>: There is an optional flag, <code>-N</code>, you may see in a few exercises. This is an argument that only works on Intel's DevCloud that allows you to name your job submission. This argument doesn't work in Udacity's workspace integration with Intel's DevCloud.
+
+## Step 3a: Running on the CPU
+In the cell below, write the qsub command that will submit your job to the CPU with a batch size of 1.
+
+<pre><code>
+cpu_job_id_core = !qsub inference_model_job.sh -d . -l nodes=1:up-squared -F "CPU 1 /data/models/intel/vehicle-license-plate-detection-barrier-0106/FP32/vehicle-license-plate-detection-barrier-0106 cpu_stats" -N store_core 
+print(cpu_job_id_core[0])
+</code></pre>
+
+## Step 3b: Running on the CPU with Batches
+In the cell below, write the qsub command that will submit your job to the CPU with a batch size of 10.
+
+<pre><code>
+cpu_batch_job_id_core = !qsub inference_model_job.sh -d . -l nodes=1:up-squared -F "CPU 10 /data/models/intel/vehicle-license-plate-detection-barrier-0106/FP32/vehicle-license-plate-detection-barrier-0106 cpu_batch_stats" -N store_core 
+print(cpu_batch_job_id_core[0])
+</code></pre>
+
+## Step 3c: Running on the GPU
+In the cell below, write the qsub command that will submit your job to the GPU with a batch size of 1.
+
+<pre><code>
+gpu_job_id_core = !qsub inference_model_job.sh -d . -l nodes=1:up-squared -F "GPU 1 /data/models/intel/vehicle-license-plate-detection-barrier-0106/FP16/vehicle-license-plate-detection-barrier-0106 gpu_stats" -N store_core 
+print(gpu_job_id_core[0])
+</code></pre>
+
+## Step 3d: Running on the GPU with batches
+In the cell below, write the qsub command that will submit your job to the GPU with a batch size of 10.
+
+<pre><code>
+gpu_batch_job_id_core = !qsub inference_model_job.sh -d . -l nodes=1:up-squared -F "GPU 10 /data/models/intel/vehicle-license-plate-detection-barrier-0106/FP16/vehicle-license-plate-detection-barrier-0106 gpu_batch_stats" -N store_core 
+print(gpu_batch_job_id_core[0])
+</code></pre>
+
+# Step 4: Running liveQStat
+
+Running the <code>liveQStat</code> function, we can see the live status of our job. Running the this function will lock the cell and poll the job status 10 times. The cell is locked until this finishes polling 10 times or you can interrupt the kernel to stop it by pressing the stop button at the top:
+
+* <code>Q</code> status means our job is currently awaiting an available node
+* <code>R</code> status means our job is currently running on the requested node
+
+<strong>Note</strong>: In the demonstration, it is pointed out that <code>W</code> status means your job is done. This is no longer accurate. Once a job has finished running, it will no longer show in the list when running the <code>liveQStat</code> function.
+
+<pre><code>
+import liveQStat
+liveQStat.liveQStat()
+</code></pre>
+
+# Step 5: Retrieving Output Files
+
+In this step, we'll be using the <code>getResults</code> function to retrieve our job's results. This function takes a few arguments.
+
+1. <code>job id</code> - This values are stored in the variables for each job you submitted using the qsub command in <strong>Step 3a, Step 3b, Step 3c</strong>, and 
+<strong>Step 3d</strong>:
+
+    * <code>cpu_job_id_core</code>
+    * <code>cpu_batch_job_id_core</code>
+    * <code>gpu_job_id_core</code>
+    * <code>gpu_batch_job_id_core</code>
+    
+Remember that this value is an array with a single string, so we access the string value using <code>job_id_core[0]</code>.
+
+2. <code>filename</code> - This value should match the filename of the compressed file we have in our <code>inference_model_job.sh</code> shell script.
+3. <code>blocking</code> - This is an optional argument and is set to <code>False</code> by default. If this is set to <code>True</code>, the cell is locked while waiting for the results to come back. There is a status indicator showing the cell is waiting on results.
+
+<strong>Note</strong>: The <code>getResults</code> function is unique to Udacity's workspace integration with Intel's DevCloud. When working on Intel's DevCloud environment, your job's results are automatically retrieved and placed in your working directory.
+
+## Step 5a: Get GPU Results
+<strong>Without batches</strong>
+
+<pre><code>
+import get_results
+get_results.getResults(gpu_job_id_core[0], filename="output.tgz", blocking=True)
+</code></pre>
+
+<pre><code>!tar zxf output.tgz</code></pre>
+<pre><code>!cat stdout.log</code></pre>
+<pre><code>!cat stderr.log</code></pre>
+
+<strong>With Batches</strong>
+
+<pre><code>
+import get_results
+get_results.getResults(gpu_batch_job_id_core[0], filename="output.tgz", blocking=True)
+</code></pre>
+
+<pre><code>!tar zxf output.tgz</code></pre>
+<pre><code>!cat stdout.log</code></pre>
+<pre><code>!cat stderr.log</code></pre>
+
+## Step 5b: Get CPU Results
+<strong>Without Batches</strong>
+
+<pre><code>
+import get_results
+get_results.getResults(cpu_job_id_core[0], filename="output.tgz", blocking=True)
+</code></pre>
+
+<pre><code>!tar zxf output.tgz</code></pre>
+<pre><code>!cat stdout.log</code></pre>
+<pre><code>!cat stderr.log</code></pre>
+
+<strong>With Batches</strong>
+
+<pre><code>
+import get_results
+get_results.getResults(cpu_batch_job_id_core[0], filename="output.tgz", blocking=True)
+</code></pre>
+
+<pre><code>!tar zxf output.tgz</code></pre>
+<pre><code>!cat stdout.log</code></pre>
+<pre><code>!cat stderr.log</code></pre>
+
+# Step 6: View the Outputs
+
+Can you plot the load time, inference time and the frames per second in the cell below?
+
+<pre><code>
+import matplotlib.pyplot as plt
+</code></pre>
+
+<pre><code>
+def plot(labels, data, title, label):
+    fig = plt.figure()
+    ax = fig.add_axes([0,0,1,1])
+    ax.set_ylabel(label)
+    ax.set_title(title)
+    ax.bar(labels, data)
+    
+def read_files(paths, labels):
+    load_time=[]
+    inference_time=[]
+    fps=[]
+    
+    for path in paths:
+        if os.path.isfile(path):
+            f=open(path, 'r')
+            load_time.append(float(f.readline()))
+            inference_time.append(float(f.readline()))
+            fps.append(float(f.readline()))
+
+    plot(labels, load_time, 'Model Load Time', 'seconds')
+    plot(labels, inference_time, 'Inference Time', 'seconds')
+    plot(labels, fps, 'Frames per Second', 'Frames')
+
+paths=['gpu_stats.txt', 'cpu_stats.txt', 'gpu_batch_stats.txt', 'cpu_batch_stats.txt']
+read_files(paths, ['GPU', 'CPU', 'GPU Batching', 'CPU Batching'])
+</code></pre>
+
+
+
+# Conclusion
+We can see that batching the images leads to some improvement in <strong>inference time</strong> and <strong>FPS</strong> for both the CPU and GPU; however, we can see the improvement in performance for the GPU is much better.
+
+
 
 # Solution of the exercise and adaptation as a Repository: Andrés R. Bücheli.
 
