@@ -19,17 +19,18 @@ In this exercise, you will do the following:
     . Calculate the time it takes to run inference 1000 times with a batch of 1.
     . Calculate the time it takes to run inference 100 times with a batch of 10.
 2. Write a shell script to submit a job to Intel's DevCloud.
-3. Submit two jobs using ´qsub´ on an edge node.
+3. Submit two jobs using <code>qsub</code> on an edge node.
 
-One job using CPU as the device with an UP Squared Grove IoT Dev kit.
-One job using GPU as the device with an UP Squared Grove IoT Dev kit.
-Run liveQStat to view the status of your submitted jobs.
-Retrieve the results from your job.
-View the results.
-Plot and compare the results using bar graphs with matplotlib for the following metrics:
-Model Loading Time
-Inference Time
-Frames Per Secone (FPS)
+    . One job using <code>CPU</code> as the device with an <strong>UP Squared Grove IoT Dev kit</strong>.
+    . One job using <code>GPU</code> as the device with an <strong>UP Squared Grove IoT Dev kit</strong>.
+4. Run <code><liveQStat</code> to view the status of your submitted jobs.
+5. Retrieve the results from your job.
+6. View the results.
+    7. Plot and compare the results using bar graphs with <code>matplotlib</code> for the following metrics:
+    
+    . Model Loading Time
+    . Inference Time
+    . Frames Per Secone (FPS)
 
 # Solution of the exercise and adaptation as a Repository: Andrés R. Bücheli.
 
