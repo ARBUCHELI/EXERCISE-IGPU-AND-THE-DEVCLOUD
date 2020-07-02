@@ -1,6 +1,6 @@
 # EXERCISE-IGPU-AND-THE-DEVCLOUD
 
-## This Content was Created by Intel Edge AI for IoT Developers UDACITY Nanodegree. (Solution of the exercise and adaptation as a repository: Andrés R. Bücheli.)
+## This Content was Created by Intel Edge AI for IoT Developers UDACITY Nanodegree. (Solution of the exercise and adaptation as a repository: Andrés R. Bucheli.)
 
 Requesting a CPU on Intel's DevCloud and loading a model on the IGPU, and running inference on an image using both a CPU and IGPU.
 
@@ -362,5 +362,5 @@ We can see that batching the images leads to some improvement in <strong>inferen
 
 
 
-# Solution of the exercise and adaptation as a Repository: Andrés R. Bücheli.
+# Solution of the exercise and adaptation as a Repository: Andrés R. Bucheli.
 
