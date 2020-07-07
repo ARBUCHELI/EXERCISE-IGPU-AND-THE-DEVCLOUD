@@ -362,5 +362,5 @@ We can see that batching the images leads to some improvement in <strong>inferen
 
 
 
-# Solution of the exercise and adaptation as a Repository: Andrés R. Bucheli.
+## Solution of the exercise and adaptation as a Repository: Andrés R. Bucheli.
 
